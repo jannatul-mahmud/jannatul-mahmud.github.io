@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Jannatul Mahmud</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23ff5722'>▸</text></svg>">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav class="nav">
+  <a href="index.html" class="logo">JM / PORTFOLIO</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="blog.html" class="active">Blog</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap container">
+  <div class="section-eyebrow">Notes & write-ups</div>
+  <h1 class="section-title">The <em>blog</em>.</h1>
+
+  <p style="max-width:680px; color: var(--muted); font-size: 1.1rem; margin-bottom: 4rem;">
+    Things I'm learning, problems I had to solve, and notes I wish I had when I started.
+    Mostly embedded, sometimes assembly, occasionally philosophy.
+  </p>
+
+  <div class="blog-list">
+    <a href="blog-traffic-light-build.html" class="blog-item">
+      <div class="blog-date">2026 · MAY</div>
+      <div>
+        <h3>Building an ESP32 traffic light from scratch</h3>
+        <p>The full build log — from sensor wiring to FSM design to debugging Serial Monitor on macOS. Includes every dead end I hit.</p>
+      </div>
+      <div class="blog-arrow">→</div>
+    </a>
+
+    <a href="#" class="blog-item">
+      <div class="blog-date">COMING SOON</div>
+      <div>
+        <h3>Why a 1k/2k voltage divider, and not a logic-level shifter?</h3>
+        <p>The cheap classic way to run a 5V sensor into a 3.3V GPIO — and when it's actually a bad idea.</p>
+      </div>
+      <div class="blog-arrow">→</div>
+    </a>
+
+    <a href="#" class="blog-item">
+      <div class="blog-date">COMING SOON</div>
+      <div>
+        <h3>FSM in Logisim vs FSM in C++ — same machine, two implementations</h3>
+        <p>How the same finite state machine maps onto digital logic gates and onto an embedded software loop. Why both views matter.</p>
+      </div>
+      <div class="blog-arrow">→</div>
+    </a>
+
+    <a href="#" class="blog-item">
+      <div class="blog-date">COMING SOON</div>
+      <div>
+        <h3>Stack frames in LC-3: passing array pointers and finding the max</h3>
+        <p>A walkthrough of the runtime stack in LC-3 assembly — frame pointer (R5), stack pointer (R6), and how to clean up after JSR.</p>
+      </div>
+      <div class="blog-arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<footer class="footer">
+  © 2026 JANNATUL MAHMUD <span class="accent">●</span> BUILT FROM SCRATCH
+</footer>
+
+</body>
+</html>

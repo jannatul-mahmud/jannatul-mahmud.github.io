@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building an ESP32 Traffic Light — Jannatul Mahmud</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23ff5722'>▸</text></svg>">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav class="nav">
+  <a href="index.html" class="logo">JM / PORTFOLIO</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="blog.html" class="active">Blog</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="detail-hero">
+    <a href="blog.html" class="back-link">← All posts</a>
+    <h1>Building an ESP32 traffic<br>light <em>from scratch</em>.</h1>
+    <div class="detail-meta">
+      <div>POSTED<strong>May 2026</strong></div>
+      <div>READ<strong>~10 min</strong></div>
+      <div>TAGS<strong>ESP32 · Embedded · Build Log</strong></div>
+    </div>
+  </div>
+
+  <div class="detail-content">
+
+    <p style="font-family: var(--font-serif); font-size: 1.4rem; font-style: italic; color: var(--ink); line-height: 1.5; margin-bottom: 2.5rem;">
+      A complete build log of my ESP32-S3 ultrasonic traffic light — including every
+      dead end, debugging session, and "why isn't this working" moment that didn't make
+      it into the project page.
+    </p>
+
+    <h2>The starting point</h2>
+    <p>
+      In my Computer Engineering coursework I'd already designed a traffic-light finite
+      state machine in Logisim Evolution: D flip-flops for the state register, a counter
+      for timing, ROM for the output decoder. It worked in simulation. The natural next
+      step was building the same FSM in real hardware with an ESP32-S3 and an ultrasonic
+      sensor.
+    </p>
+    <p>Spoiler: the FSM was the easy part.</p>
+
+    <h2>Step 1 — Get the sensor working alone</h2>
+    <p>
+      Before wiring up six LEDs on top of a sensor I didn't understand, I built a
+      standalone HC-SR04 test sketch. Just trigger the pulse, read the echo, print the
+      distance. About 25 lines of code. This turned out to be the best decision I made
+      in the project.
+    </p>
+    <p>
+      First try? Pulse duration of zero, every reading. The sensor was wired, powered,
+      and silent. The next two hours were a tour of every common HC-SR04 mistake.
+    </p>
+
+    <h3>Mistake 1: Wrong VCC</h3>
+    <p>
+      The HC-SR04 needs 5 V. The ESP32-S3 has both a 5 V and a 3.3 V pin. Mine was on
+      3.3 V. Moved it to 5 V — still no echoes.
+    </p>
+
+    <h3>Mistake 2: The voltage divider</h3>
+    <p>
+      The sensor's ECHO pin outputs 5 V, but the ESP32 GPIO can only handle 3.3 V. A
+      standard fix is a 1 kΩ / 2 kΩ voltage divider that drops the 5 V down to ~3.3 V.
+      I had it wired correctly... or so I thought.
+    </p>
+    <p>
+      Turned out the resistors were both legs in the same row of the breadboard, so
+      they weren't actually doing anything. The signal was flowing straight around them.
+      Once I fixed the divider so each resistor bridged two different rows — readings
+      appeared.
+    </p>
+
+    <h3>Mistake 3: Only 1 kΩ resistors available</h3>
+    <p>
+      My kit had 20× 1 kΩ resistors but no 2 kΩ. The fix: two 1 kΩ in series equals
+      2 kΩ. Three resistors instead of two, identical electrical behavior:
+    </p>
+    <pre><code>ECHO ──[1kΩ]──┬──── GPIO 17
+              │
+            [1kΩ]
+              │
+            [1kΩ]
+              │
+             GND</code></pre>
+
+    <h2>Step 2 — Add the LEDs</h2>
+    <p>
+      With the sensor reporting accurate distances, I moved on to the LEDs. Six of
+      them — red, yellow, green for highway and farm-road. Each with a 220 Ω
+      current-limiting resistor.
+    </p>
+    <p>
+      First upload of the full traffic light code: only the red LED on highway lit
+      up. The other five — nothing. Sensor was working, code was running, but five
+      LEDs refused to turn on. I rewired everything. Three times. Same result.
+    </p>
+
+    <h3>What actually broke it</h3>
+    <p>
+      The issue was the GND rail. I'd run the sensor's ground to one rail and forgotten
+      that some breadboards have a split in the middle of the power rails — the top
+      half and bottom half aren't connected unless you bridge them with a wire.
+    </p>
+    <p>
+      The LEDs were grounding to the bottom rail. The ESP32's GND wire was on the top
+      rail. They looked connected, but electrically they weren't. Adding a single
+      jumper from the top rail to the bottom rail fixed five LEDs simultaneously.
+    </p>
+
+    <h2>Step 3 — Serial Monitor not displaying</h2>
+    <p>
+      With everything else working, I noticed Serial Monitor stopped printing. The LEDs
+      were behaving correctly, but the debug output had gone silent.
+    </p>
+    <p>
+      The fix is an ESP32-S3-specific quirk. There's a setting called
+      <code>USB CDC On Boot</code> in Arduino IDE's Tools menu that controls whether
+      the chip prints over the USB serial port at boot. The default is sometimes
+      "Disabled," which silently drops every <code>Serial.print()</code>. Switching it
+      to "Enabled" and re-uploading made the messages appear.
+    </p>
+    <p>I would never have guessed this from the symptoms alone. The error message was: nothing.</p>
+
+    <h2>Step 4 — The actual FSM was easy</h2>
+    <p>
+      Once the hardware worked, the four-state FSM came together in about 30 minutes.
+      Non-blocking timing with <code>millis()</code> instead of <code>delay()</code>,
+      a <code>switch</code> on the state enum, and a helper function to centralize
+      state transitions.
+    </p>
+    <p>
+      The most subtle bit was the farm-road green state, which has three exit
+      conditions: minimum hold of 3 seconds (so cars don't pass too fast), maximum hold
+      of 16 seconds (so the highway gets a turn), and early exit when the car leaves
+      after the minimum is met.
+    </p>
+
+    <pre><code>case FG:
+  if (elapsed >= FG_MAX_TIME) {
+    enterState(FY);
+  } else if (elapsed >= FG_MIN_TIME && !carPresent) {
+    enterState(FY);
+  }
+  break;</code></pre>
+
+    <h2>What I'd do differently</h2>
+    <ul>
+      <li><strong>Test the breadboard's power rails first.</strong> Before placing any components, jumper the top rail to the bottom rail and make sure both sides connect to ESP32 GND.</li>
+      <li><strong>Build incrementally.</strong> Sensor first, then one LED, then six. The "all at once" approach hides which step broke things.</li>
+      <li><strong>Configure USB CDC before uploading.</strong> If you're on ESP32-S3, set USB CDC On Boot = Enabled before your first upload.</li>
+    </ul>
+
+    <h2>Takeaways</h2>
+    <p>
+      The thing about embedded projects is that "wrong" doesn't mean "broken." Every
+      mistake I hit was something the textbook had probably mentioned in passing —
+      voltage divider topology, breadboard power rail layout, USB CDC setting. None of
+      it would have been a surprise if I'd been paying closer attention to the manual.
+    </p>
+    <p>But until you wire it up wrong yourself, those details don't stick. That's why projects matter more than reading.</p>
+
+    <p style="margin-top: 3rem;">
+      <a href="project-traffic-light.html" class="btn">View the project →</a>
+      &nbsp;
+      <a href="https://github.com/jannatulmahmud9/esp32-traffic-light" class="btn">Source on GitHub →</a>
+    </p>
+
+  </div>
+</div>
+
+<footer class="footer">
+  © 2026 JANNATUL MAHMUD <span class="accent">●</span> BUILT FROM SCRATCH
+</footer>
+
+</body>
+</html>

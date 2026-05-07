@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Jannatul Mahmud</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23ff5722'>▸</text></svg>">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav class="nav">
+  <a href="index.html" class="logo">JM / PORTFOLIO</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="projects.html" class="active">Projects</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap container">
+  <div class="section-eyebrow">All work · 06 projects</div>
+  <h1 class="section-title">The <em>portfolio</em>.</h1>
+
+  <p style="max-width:680px; color: var(--muted); font-size: 1.1rem; margin-bottom: 4rem;">
+    A collection of things I've built — embedded systems, digital logic, data structures,
+    assembly programs, and quantum circuits. Each links to its source code and write-up.
+  </p>
+
+  <div class="projects">
+    <a href="project-traffic-light.html" class="project">
+      <div class="project-num">01 / 06</div>
+      <div class="project-info">
+        <h3>ESP32 Ultrasonic Traffic Light</h3>
+        <p>4-state FSM controlling a highway/farm-road intersection. ESP32-S3 reads an HC-SR04 sensor; LEDs cycle through HG → HY → FG → FY when a "car" is detected.</p>
+        <div class="project-tags">
+          <span class="tag">ESP32</span><span class="tag">C++</span><span class="tag">HC-SR04</span><span class="tag">FSM</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a href="project-logisim.html" class="project">
+      <div class="project-num">02 / 06</div>
+      <div class="project-info">
+        <h3>Logisim Traffic Light FSM</h3>
+        <p>The same FSM as project 01, in pure digital logic — D flip-flops, counters, ROM decoder. Demonstrates hardware/software equivalence.</p>
+        <div class="project-tags">
+          <span class="tag">Logisim Evolution</span><span class="tag">Digital Logic</span><span class="tag">FSM</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a href="project-bst.html" class="project">
+      <div class="project-num">03 / 06</div>
+      <div class="project-info">
+        <h3>Java Enhanced Binary Search Tree</h3>
+        <p>Generic BST with insertion, deletion, in-order/pre-order/post-order traversals, and balance operations. Built in Eclipse with full JUnit coverage.</p>
+        <div class="project-tags">
+          <span class="tag">Java</span><span class="tag">OOP</span><span class="tag">Trees</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a href="project-array-dict.html" class="project">
+      <div class="project-num">04 / 06</div>
+      <div class="project-info">
+        <h3>ArrayDictionary in C++</h3>
+        <p>Templated map implementation with dynamic resizing. Built against textbook-provided headers — interface-respecting design.</p>
+        <div class="project-tags">
+          <span class="tag">C++</span><span class="tag">Templates</span><span class="tag">VS 2022</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a href="project-lc3.html" class="project">
+      <div class="project-num">05 / 06</div>
+      <div class="project-info">
+        <h3>LC-3 Assembly Programs</h3>
+        <p>Calculator (+, −, ×), two-digit reader, array max via runtime stack. Frame pointer, stack pointer, JSR/RET conventions, ASCII conversion.</p>
+        <div class="project-tags">
+          <span class="tag">LC-3</span><span class="tag">Assembly</span><span class="tag">Stack</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a href="project-qiskit.html" class="project">
+      <div class="project-num">06 / 06</div>
+      <div class="project-info">
+        <h3>Qiskit Quantum Circuits</h3>
+        <p>Bell-state preparation, Deutsch-Jozsa, Grover's search, QFT, period finding. Built in Jupyter on Aer simulator.</p>
+        <div class="project-tags">
+          <span class="tag">Python</span><span class="tag">Qiskit</span><span class="tag">Quantum</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+  </div>
+</div>
+
+<footer class="footer">
+  © 2026 JANNATUL MAHMUD <span class="accent">●</span> BUILT FROM SCRATCH
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESP32 Ultrasonic Traffic Light — Jannatul Mahmud</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23ff5722'>▸</text></svg>">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav class="nav">
+  <a href="index.html" class="logo">JM / PORTFOLIO</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="projects.html" class="active">Projects</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="detail-hero">
+    <a href="projects.html" class="back-link">← All projects</a>
+    <h1>ESP32 Ultrasonic<br><em>Traffic Light.</em></h1>
+    <div class="detail-meta">
+      <div>YEAR<strong>2026</strong></div>
+      <div>STACK<strong>ESP32-S3 · C++ · HC-SR04</strong></div>
+      <div>CATEGORY<strong>Embedded Systems</strong></div>
+      <div>SOURCE<strong><a href="https://github.com/jannatulmahmud9/esp32-traffic-light" style="color: var(--accent-2);">github.com</a></strong></div>
+    </div>
+  </div>
+
+  <div class="detail-content">
+
+    <p style="font-family: var(--font-serif); font-size: 1.4rem; font-style: italic; color: var(--ink); line-height: 1.5; margin-bottom: 2.5rem;">
+      A smart traffic light controller that gives the highway right-of-way by default
+      and only flips to the farm-road when a vehicle is detected by an ultrasonic sensor.
+    </p>
+
+    <div class="video-embed">
+      <span>[ Demo video / GIF goes here — replace this block with your media ]</span>
+    </div>
+
+    <h2>The problem</h2>
+    <p>
+      Real traffic lights at small intersections are dumb — they cycle on a fixed
+      schedule whether anyone's at the light or not. That wastes everyone's time on
+      the busy road. The standard fix is "actuated control": detect cars on the side
+      road and only give them green when needed.
+    </p>
+    <p>
+      I implemented this as a college Computer Engineering project, starting from a
+      Logisim digital-logic version and porting the same FSM to ESP32 firmware.
+    </p>
+
+    <h2>The finite state machine</h2>
+    <p>
+      Four states control the lights. The transitions handle the interesting edge
+      cases: minimum hold time on farm-road green (so cars don't pass too quickly),
+      maximum hold time (so the highway always gets a turn), and early exit when the
+      car leaves.
+    </p>
+
+    <table class="detail-table">
+      <thead>
+        <tr><th>State</th><th>Highway</th><th>Farm-road</th><th>Transition</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>HG</td><td>Green</td><td>Red</td><td>Stay until car detected</td></tr>
+        <tr><td>HY</td><td>Yellow</td><td>Red</td><td>After 2 seconds</td></tr>
+        <tr><td>FG</td><td>Red</td><td>Green</td><td>Min 3 s, leave when car gone, max 16 s</td></tr>
+        <tr><td>FY</td><td>Red</td><td>Yellow</td><td>After 2 seconds</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Hardware</h2>
+    <ul>
+      <li>ESP32-S3-N16R8 dev board</li>
+      <li>HC-SR04 ultrasonic sensor (5V supply, ECHO via 1k/2k voltage divider for safe 3.3V GPIO)</li>
+      <li>6 LEDs (red/yellow/green for each road)</li>
+      <li>6× 220 Ω current-limiting resistors</li>
+      <li>3× 1 kΩ resistors for the divider (two in series for the 2 kΩ leg)</li>
+    </ul>
+
+    <h2>Why a voltage divider?</h2>
+    <p>
+      The HC-SR04 outputs 5 V on its ECHO pin, but the ESP32-S3's GPIO is 3.3 V tolerant.
+      Plugging 5 V directly into a 3.3 V pin damages the chip over time. A voltage
+      divider with a 1 kΩ / 2 kΩ ratio drops the signal to a safe ~3.3 V:
+    </p>
+    <pre><code>V_out = V_in × R2 / (R1 + R2)
+      = 5 V × 2kΩ / (1kΩ + 2kΩ)
+      ≈ 3.33 V</code></pre>
+
+    <h2>Software design</h2>
+    <p>
+      The firmware uses non-blocking timing with <code>millis()</code> instead of
+      <code>delay()</code>, so the FSM transitions react instantly to sensor changes
+      while still holding states for fixed durations. The HC-SR04 is polled every
+      200 ms with a 30 ms <code>pulseIn()</code> timeout — long enough for ~5 m of
+      range, short enough that a missing echo doesn't stall the loop.
+    </p>
+
+    <pre><code>void loop() {
+  if (millis() - lastSenseAt >= SENSE_PERIOD) {
+    lastSenseAt = millis();
+    float d = readDistanceCM();
+    carPresent = (d > 0 && d < CAR_DISTANCE_CM);
+  }
+
+  unsigned long elapsed = millis() - stateStart;
+
+  switch (state) {
+    case HG:
+      if (carPresent) enterState(HY);
+      break;
+    case HY:
+      if (elapsed >= YELLOW_TIME) enterState(FG);
+      break;
+    case FG:
+      if (elapsed >= FG_MAX_TIME) enterState(FY);
+      else if (elapsed >= FG_MIN_TIME && !carPresent) enterState(FY);
+      break;
+    case FY:
+      if (elapsed >= YELLOW_TIME) enterState(HG);
+      break;
+  }
+}</code></pre>
+
+    <h2>What I learned</h2>
+    <ul>
+      <li><strong>Hardware/software equivalence.</strong> The same FSM works as a Logisim circuit (D flip-flops + counter) and as embedded C++. Different implementations, identical behavior — and seeing it both ways made the FSM concept click in a way the textbook didn't.</li>
+      <li><strong>Voltage levels matter.</strong> "It just works" until you plug 5 V into a 3.3 V GPIO and silently degrade the chip. Always check the datasheet.</li>
+      <li><strong>Non-blocking timing.</strong> <code>delay()</code> is a beginner trap. The <code>millis()</code> pattern lets multiple things happen at once on a single-threaded MCU.</li>
+      <li><strong>Debug with what you have.</strong> When Serial Monitor wasn't working, I used the LEDs themselves as a debug output to confirm the sensor was reading correctly.</li>
+    </ul>
+
+    <h2>What's next</h2>
+    <ul>
+      <li>Add a pedestrian crosswalk button with software debouncing</li>
+      <li>Add an OLED display showing current state and live distance</li>
+      <li>Push state changes to a WiFi dashboard</li>
+      <li>Use a real PCB instead of the breadboard</li>
+    </ul>
+
+    <p style="margin-top: 3rem;">
+      <a href="https://github.com/jannatulmahmud9/esp32-traffic-light" class="btn btn-primary">View source on GitHub →</a>
+    </p>
+
+  </div>
+</div>
+
+<footer class="footer">
+  © 2026 JANNATUL MAHMUD <span class="accent">●</span> BUILT FROM SCRATCH
+</footer>
+
+</body>
+</html>
