@@ -1,6 +1,6 @@
 # Deploy your portfolio to GitHub Pages
 
-Follow these steps to get your site live at `https://jannatulmahmud9.github.io`.
+Follow these steps to get your site live at `https://jannatul-mahmud.github.io`.
 
 ## Step 1 — Add your résumé and profile photo
 
@@ -14,7 +14,7 @@ Follow these steps to get your site live at `https://jannatulmahmud9.github.io`.
 ## Step 2 — Open Terminal and go to the folder
 
 ```bash
-cd ~/Documents/portfolio
+cd ~/Portfolio
 ```
 
 (Or wherever you saved these files.)
@@ -34,7 +34,7 @@ instead of `username.github.io/some-repo`.
 
 1. Go to **github.com**, log in
 2. Click **+** top-right → **New repository**
-3. Repository name: **`jannatulmahmud9.github.io`** (use your actual GitHub username,
+3. Repository name: **`jannatul-mahmud.github.io`** (use your actual GitHub username,
    followed by exactly `.github.io`)
 4. Public
 5. **Do NOT** check "Add a README" or anything else
@@ -43,7 +43,7 @@ instead of `username.github.io/some-repo`.
 ## Step 5 — Push your portfolio
 
 ```bash
-git remote add origin https://github.com/jannatulmahmud9/jannatulmahmud9.github.io.git
+git remote add origin https://github.com/jannatul-mahmud/jannatul-mahmud.github.io.git
 git branch -M main
 git push -u origin main
 ```
@@ -65,7 +65,7 @@ First deploy takes 1-2 minutes.
 ## Step 7 — Visit your site
 
 ```
-https://jannatulmahmud9.github.io
+https://jannatul-mahmud.github.io
 ```
 
 That's it. Live on the actual web with a real URL you can put on your résumé.
@@ -73,7 +73,7 @@ That's it. Live on the actual web with a real URL you can put on your résumé.
 ## Updating later
 
 ```bash
-cd ~/Documents/portfolio
+cd ~/Portfolio
 git add .
 git commit -m "describe what you changed"
 git push
