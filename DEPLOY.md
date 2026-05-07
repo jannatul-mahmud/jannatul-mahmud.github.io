@@ -2,11 +2,14 @@
 
 Follow these steps to get your site live at `https://jannatulmahmud9.github.io`.
 
-## Step 1 — Add your résumé
+## Step 1 — Add your résumé and profile photo
 
-1. Find your résumé PDF
-2. Rename it to `resume.pdf`
-3. Drop it into this folder (next to `index.html`)
+1. Find your résumé PDF, rename it to `resume.pdf`, drop it in this folder
+2. Find your headshot (the blue-background one with the GitHub icon), rename it to `profile.jpg`, drop it in this folder
+
+⚠️ The filename **must** be exactly `profile.jpg` (lowercase, .jpg extension). If your photo is a `.png` or `.jpeg`, either rename it to `.jpg` (works fine — extensions are just labels) OR open both `index.html` and `about.html` in a text editor and change `src="profile.jpg"` to match your actual filename.
+
+**Photo size tip:** if your photo is huge (5+ MB), shrink it first. Open in Preview → Tools → Adjust Size → set Width to 1200 px → File → Export → JPEG, quality 75%. This makes your site load much faster.
 
 ## Step 2 — Open Terminal and go to the folder
 

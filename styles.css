@@ -375,3 +375,232 @@ body {
   .project-arrow { display: none; }
   .detail-meta { gap: 1.5rem; }
 }
+
+/* ==========================================================
+   PROFILE PHOTO TREATMENTS
+   ========================================================== */
+
+/* HOME PAGE — split layout with photo on the right */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  min-height: 100vh;
+  padding: 8rem 3rem 4rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.hero-grid .hero-text { min-width: 0; }
+.hero-grid h1 { font-size: clamp(2.5rem, 7vw, 6.5rem); }
+
+/* Portrait wrapper — duotone-tinted with hover reveal */
+.portrait {
+  position: relative;
+  aspect-ratio: 4/5;
+  width: 100%;
+  max-width: 420px;
+  justify-self: end;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.6s forwards;
+}
+
+.portrait::before {
+  content: "";
+  position: absolute;
+  inset: -20px -20px 20px 20px;
+  border: 2px solid var(--accent);
+  z-index: 0;
+  transition: inset 0.4s ease;
+}
+
+.portrait::after {
+  content: "";
+  position: absolute;
+  inset: 20px 20px -20px -20px;
+  border: 2px solid var(--accent-2);
+  z-index: 0;
+  transition: inset 0.4s ease;
+}
+
+.portrait:hover::before { inset: -28px -28px 28px 28px; }
+.portrait:hover::after  { inset: 28px 28px -28px -28px; }
+
+.portrait-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter:
+    grayscale(0.4)
+    contrast(1.05)
+    brightness(0.95)
+    sepia(0.15)
+    hue-rotate(-10deg);
+  transition: filter 0.5s ease, transform 0.5s ease;
+  display: block;
+}
+
+.portrait:hover .portrait-img {
+  filter: none;
+  transform: scale(1.02);
+}
+
+.portrait-tag {
+  position: absolute;
+  bottom: -20px;
+  left: -20px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  padding: 0.5rem 1rem;
+  z-index: 2;
+  text-transform: uppercase;
+}
+
+.portrait-status {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  padding: 0.4rem 0.75rem;
+  z-index: 2;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.portrait-status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: #00ff88;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00ff88;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ABOUT PAGE — bigger, more editorial portrait */
+.about-grid-with-photo {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.about-portrait {
+  position: relative;
+  aspect-ratio: 4/5;
+  width: 100%;
+  max-width: 460px;
+  position: sticky;
+  top: 8rem;
+}
+
+.about-portrait::before {
+  content: "";
+  position: absolute;
+  inset: 24px -24px -24px 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  z-index: 0;
+  opacity: 0.3;
+}
+
+.about-portrait::after {
+  content: "JM·26";
+  position: absolute;
+  bottom: -50px;
+  right: -10px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 5rem;
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0.4;
+  z-index: 0;
+  letter-spacing: -0.05em;
+  pointer-events: none;
+}
+
+.about-portrait-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.2) contrast(1.05);
+  transition: filter 0.5s ease;
+  display: block;
+}
+
+.about-portrait:hover .about-portrait-img { filter: none; }
+
+.portrait-frame {
+  position: relative;
+  padding: 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elev);
+  z-index: 1;
+}
+
+.portrait-meta {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--accent);
+}
+
+.portrait-meta span:first-child { color: var(--accent); }
+.portrait-meta span:last-child { color: var(--muted); }
+
+/* Mobile adjustments for photo */
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 7rem 1.5rem 3rem;
+    min-height: auto;
+  }
+  .portrait {
+    max-width: 280px;
+    justify-self: center;
+    margin-top: 1rem;
+  }
+  .about-grid-with-photo {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .about-portrait {
+    max-width: 320px;
+    margin: 0 auto;
+    position: static;
+  }
+  .about-portrait::after { font-size: 3rem; bottom: -30px; }
+}
